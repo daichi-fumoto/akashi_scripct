@@ -59,10 +59,10 @@ def shift_input(driver, data)
     name_btn = driver.find_element(:xpath, "//label[text()=\"#{name}\"]")
 
     if @before_name != nil
-      if driver.find_element(:xpath, "//label[text()=\"#{@before_name}\"]").displayed?
+      if driver.find_element(:xpath, "//label[text()=\"#{@before_name}\"]").displayed? == false
         driver.find_element(:xpath, "//label[text()=\"#{@before_name}\"]").click
-        name_btn.click
       end
+      name_btn.click
     else
       name_btn.click
     end
@@ -106,7 +106,6 @@ def shift_input(driver, data)
 
     input(driver, data, pattern, mark)
 
-    puts "#{name}の入力完了。"
 
   end 
 end
@@ -135,7 +134,7 @@ def end_input(data, last_member)
     puts "#{data[1]}まで実行されたため終了します。"
     exit
   elsif last_member == ""
-    puts "全ての処理は正常に完了しました。"
+    puts "#{data[1]}の処理は正常に完了しました。"
   end
 end
 
