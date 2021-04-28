@@ -4,7 +4,7 @@ require "csv"
 require "date"
 
 # ============= CSV読み込み ============================ 
-data_list = CSV.read("CSV出力.csv")
+data_list = CSV.read("CSV出力用.csv")
 start_member = "" # 誰から始めるか（最初から始める場合は空文字にしておく）
 last_member = ""  # 誰まで実行するか（最後まで実行する場合は空文字にしておく)
 
@@ -57,8 +57,18 @@ def shift_input(driver, data)
     name_input.send_keys name[0]
     
     name_btn = driver.find_element(:xpath, "//label[text()=\"#{name}\"]")
-    name_btn.click
-    sleep 5
+
+    if @before_name != nil
+      if driver.find_element(:xpath, "//label[text()=\"#{@before_name}\"]").displayed?
+        driver.find_element(:xpath, "//label[text()=\"#{@before_name}\"]").click
+        name_btn.click
+      end
+    else
+      name_btn.click
+    end
+    sleep 1
+
+    @before_name = name
     
     # 早番入力
     pattern = 'I（10時-19時）'
@@ -80,7 +90,7 @@ def shift_input(driver, data)
 
     # 中抜け入力
     pattern = 'Q（11時-22時）【中抜け】'
-    mark = ["11-22"]
+    mark = ["11-13","11-22"]
 
     input(driver, data, pattern, mark)
 
@@ -95,6 +105,8 @@ def shift_input(driver, data)
     mark = ["有"]
 
     input(driver, data, pattern, mark)
+
+    puts "#{name}の入力完了。"
 
   end 
 end
@@ -131,7 +143,10 @@ end
 puts "#{month}月分の入力を開始します"
 data_list.each_with_index do |data, n| # csvの行を1行ずつ、取り出し、入力していく。
 
-  if start_member == ""
+  if data[0] == ""
+    puts "行情報が空のため自動登録を終了しました。"
+    
+  elsif start_member == ""
     shift_input(driver, data)
     end_input(data, last_member)
 
